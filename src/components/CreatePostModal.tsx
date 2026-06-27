@@ -52,8 +52,13 @@ export function CreatePostModal({ onClose, onPublished }: CreatePostModalProps) 
       showToast('Post published on-chain.', 'success');
       setContent('');
       onClose();
-    } catch {
-      showToast('The network rejected that post. Try again.', 'error');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      const friendlyMessage =
+        message.includes('Canopy') || message.includes('fetch') || message.includes('Failed to fetch')
+          ? 'Could not reach the Canopy node. Check the RPC endpoint in Settings.'
+          : `Post failed: ${message}`;
+      showToast(friendlyMessage, 'error');
     } finally {
       setIsPublishing(false);
     }

@@ -183,7 +183,7 @@ export function ProfilePage() {
               await refreshProfile();
               refresh();
             } else {
-              showToast('The network rejected that profile. Try again.', 'error');
+              showToast('Could not create the profile. Check the Canopy RPC connection in Settings.', 'error');
             }
           }}
         />
@@ -214,7 +214,7 @@ export function ProfilePage() {
             refresh();
             setIsEditing(false);
           } else {
-            showToast('The network rejected that update. Try again.', 'error');
+            showToast('Could not update the profile. Check the Canopy RPC connection in Settings.', 'error');
           }
         }}
       />
