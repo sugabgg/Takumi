@@ -46,14 +46,17 @@ export function FeedPage() {
       </div>
 
       {profile && (
-        <button
-          type="button"
-          onClick={() => setIsComposerOpen(true)}
-          className="flex w-full items-center gap-3 border-b border-ink-border p-4 text-left text-parchment-muted transition hover:bg-ink-raised"
-        >
-          <Avatar seed={profile.avatarSeed} displayName={profile.displayName} size={36} />
-          <span>What did you make today?</span>
-        </button>
+        <div className="border-b border-ink-border bg-ink-panel/70 p-4">
+          <button
+            type="button"
+            onClick={() => setIsComposerOpen(true)}
+            className="flex w-full items-center gap-3 rounded-2xl border border-ink-border bg-ink-raised/80 p-3 text-left text-parchment-muted shadow-sm transition hover:border-jade hover:bg-ink-raised"
+          >
+            <Avatar seed={profile.avatarSeed} displayName={profile.displayName} size={36} />
+            <span className="flex-1">What did you make today?</span>
+            <span className="rounded-full bg-jade/15 px-3 py-1 text-xs font-medium text-jade">Post</span>
+          </button>
+        </div>
       )}
 
       {feed.isLoading && feed.posts.length === 0 && <LoadingSkeleton count={5} />}

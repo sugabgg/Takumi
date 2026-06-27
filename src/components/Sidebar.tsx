@@ -16,6 +16,7 @@ interface NavItem {
 function buildNavItems(profileAddress: string | null): NavItem[] {
   return [
     { to: '/', label: 'Feed', icon: '🏠' },
+    { to: '/create', label: 'Create', icon: '✍️' },
     { to: '/search', label: 'Search', icon: '🔍' },
     { to: '/notifications', label: 'Alerts', icon: '🔔' },
     { to: profileAddress ? `/profile/${profileAddress}` : '/settings', label: 'Profile', icon: '匠' },
