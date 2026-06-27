@@ -35,7 +35,7 @@ export function CreatePostPage() {
   const canPublish = content.trim().length > 0 && remaining >= 0 && !isPublishing;
 
   async function handlePublish() {
-    if (!canPublish) return;
+    if (!canPublish || !account || !profile) return;
     setIsPublishing(true);
     try {
       const result = await createPost(account.address, content.trim());
