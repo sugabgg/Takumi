@@ -9,6 +9,8 @@
 
 import { rpcGet } from '@/lib/canopyClient';
 import { readCache, writeCache } from '@/lib/localCache';
+import { USE_MOCK } from '@/config/mock';
+import { mockGetNotifications } from '@/services/mockService';
 import type { Address, AppNotification, Page } from '@/types/domain';
 
 function readReceiptsKey(address: Address): string {
@@ -20,6 +22,8 @@ export async function getNotifications(
   address: Address,
   cursor?: string | null,
 ): Promise<Page<AppNotification>> {
+  if (USE_MOCK) return mockGetNotifications(address);
+
   const params = new URLSearchParams({ limit: '30' });
   if (cursor) params.set('cursor', cursor);
 

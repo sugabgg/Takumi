@@ -7,6 +7,8 @@
  */
 
 import { rpcGet } from '@/lib/canopyClient';
+import { USE_MOCK } from '@/config/mock';
+import { mockGetHomeFeed, mockGetTrendingPosts, mockGetUserTimeline } from '@/services/mockService';
 import type { Address, Page, Post } from '@/types/domain';
 
 interface FeedQuery {
@@ -22,6 +24,7 @@ function buildQuery({ cursor, limit = 20 }: FeedQuery): string {
 
 /** Home feed: posts from accounts the given viewer follows, newest first. */
 export async function getHomeFeed(viewer: Address, query: FeedQuery = {}): Promise<Page<Post>> {
+  if (USE_MOCK) return mockGetHomeFeed(viewer);
   return rpcGet<Page<Post>>(`/v1/query/feed/home/${viewer}?${buildQuery(query)}`);
 }
 
@@ -30,10 +33,12 @@ export async function getUserTimeline(
   address: Address,
   query: FeedQuery = {},
 ): Promise<Page<Post>> {
+  if (USE_MOCK) return mockGetUserTimeline(address);
   return rpcGet<Page<Post>>(`/v1/query/feed/timeline/${address}?${buildQuery(query)}`);
 }
 
 /** Network-wide trending posts, ranked by recent likes/comments/reposts. */
 export async function getTrendingPosts(query: FeedQuery = {}): Promise<Page<Post>> {
+  if (USE_MOCK) return mockGetTrendingPosts();
   return rpcGet<Page<Post>>(`/v1/query/feed/trending?${buildQuery(query)}`);
 }

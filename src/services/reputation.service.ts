@@ -9,6 +9,8 @@
  */
 
 import { rpcGet } from '@/lib/canopyClient';
+import { USE_MOCK } from '@/config/mock';
+import { mockGetReputationHistory, mockGetReputationSummary } from '@/services/mockService';
 import { REPUTATION_WEIGHTS } from '@/types/domain';
 import type { Address, ReputationEvent } from '@/types/domain';
 
@@ -23,6 +25,7 @@ export interface ReputationSummary {
 
 /** Fetches the current on-chain reputation summary for an address. */
 export async function getReputationSummary(address: Address): Promise<ReputationSummary> {
+  if (USE_MOCK) return mockGetReputationSummary(address);
   try {
     return await rpcGet<ReputationSummary>(`/v1/query/reputation/${address}`);
   } catch {
@@ -39,6 +42,7 @@ export async function getReputationSummary(address: Address): Promise<Reputation
 
 /** Fetches the raw reputation event history for an address, newest first. */
 export async function getReputationHistory(address: Address): Promise<ReputationEvent[]> {
+  if (USE_MOCK) return mockGetReputationHistory(address);
   try {
     return await rpcGet<ReputationEvent[]>(`/v1/query/reputation/${address}/history`);
   } catch {
