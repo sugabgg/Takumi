@@ -26,9 +26,12 @@ export function CreatePostModal({ onClose, onPublished }: CreatePostModalProps) 
 
   const remaining = MAX_LENGTH - content.length;
   const canPublish = content.trim().length > 0 && remaining >= 0 && !isPublishing;
+  const fallbackDisplayName = account ? `Wallet ${account.address.slice(0, 6)}` : 'Anonymous';
+  const fallbackUsername = account ? `wallet-${account.address.slice(0, 8)}` : 'anonymous';
+  const fallbackAvatarSeed = account?.address ?? 'anonymous';
 
   async function handlePublish() {
-    if (!account || !profile || !canPublish) return;
+    if (!account || !canPublish) return;
     setIsPublishing(true);
     try {
       const result = await createPost(account.address, content.trim());
@@ -37,9 +40,9 @@ export function CreatePostModal({ onClose, onPublished }: CreatePostModalProps) 
       onPublished({
         id: result.hash,
         author: account.address,
-        authorUsername: profile.username,
-        authorDisplayName: profile.displayName,
-        authorAvatarSeed: profile.avatarSeed,
+        authorUsername: profile?.username ?? fallbackUsername,
+        authorDisplayName: profile?.displayName ?? fallbackDisplayName,
+        authorAvatarSeed: profile?.avatarSeed ?? fallbackAvatarSeed,
         content: content.trim(),
         createdAt: new Date().toISOString(),
         likeCount: 0,
@@ -69,7 +72,11 @@ export function CreatePostModal({ onClose, onPublished }: CreatePostModalProps) 
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex gap-3">
-          {profile && <Avatar seed={profile.avatarSeed} displayName={profile.displayName} size={40} />}
+          <Avatar
+            seed={profile?.avatarSeed ?? fallbackAvatarSeed}
+            displayName={profile?.displayName ?? fallbackDisplayName}
+            size={40}
+          />
           <textarea
             autoFocus
             value={content}
@@ -79,6 +86,12 @@ export function CreatePostModal({ onClose, onPublished }: CreatePostModalProps) 
             className="flex-1 resize-none bg-transparent text-parchment outline-none placeholder:text-parchment-faint"
           />
         </div>
+
+        {!profile && (
+          <p className="mt-3 text-xs text-parchment-faint">
+            Posting works right away with your wallet; a profile will be attached later if you create one.
+          </p>
+        )}
 
         <div className="mt-3 flex items-center justify-between border-t border-ink-border pt-3">
           <span className={`text-xs ${remaining < 0 ? 'text-seal-bright' : 'text-parchment-faint'}`}>

@@ -20,11 +20,11 @@ export function CreatePostPage() {
   const [content, setContent] = useState('');
   const [isPublishing, setIsPublishing] = useState(false);
 
-  if (!account || !profile) {
+  if (!account) {
     return (
       <EmptyState
-        title="Set up your profile first"
-        description="You need an on-chain profile before you can publish posts."
+        title="Connect your wallet first"
+        description="You need a connected wallet before you can publish posts."
         actionLabel="Go to settings"
         onAction={() => navigate('/settings')}
       />
@@ -33,9 +33,11 @@ export function CreatePostPage() {
 
   const remaining = MAX_LENGTH - content.length;
   const canPublish = content.trim().length > 0 && remaining >= 0 && !isPublishing;
+  const fallbackDisplayName = account ? `Wallet ${account.address.slice(0, 6)}` : 'Anonymous';
+  const fallbackAvatarSeed = account.address;
 
   async function handlePublish() {
-    if (!canPublish || !account || !profile) return;
+    if (!canPublish || !account) return;
     setIsPublishing(true);
     try {
       const result = await createPost(account.address, content.trim());
@@ -54,7 +56,7 @@ export function CreatePostPage() {
       <h1 className="font-display text-lg text-parchment">Create post</h1>
 
       <div className="mt-4 flex gap-3">
-        <Avatar seed={profile.avatarSeed} displayName={profile.displayName} size={40} />
+        <Avatar seed={profile?.avatarSeed ?? fallbackAvatarSeed} displayName={profile?.displayName ?? fallbackDisplayName} size={40} />
         <textarea
           autoFocus
           value={content}
@@ -64,6 +66,12 @@ export function CreatePostPage() {
           className="flex-1 resize-none rounded-lg border border-ink-border bg-ink-panel p-3 text-parchment outline-none placeholder:text-parchment-faint focus:border-jade"
         />
       </div>
+
+      {!profile && (
+        <p className="mt-3 text-xs text-parchment-faint">
+          You can publish immediately with your wallet. A profile will be attached later if you create one.
+        </p>
+      )}
 
       <div className="mt-3 flex items-center justify-between">
         <span className={`text-xs ${remaining < 0 ? 'text-seal-bright' : 'text-parchment-faint'}`}>
